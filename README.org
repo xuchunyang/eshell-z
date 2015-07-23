@@ -1,0 +1,34 @@
+* eshell-z
+** Introduction
+=eshell-z.el= is an Emacs port of [z](https://github.com/rupa/z). They can
+work together by sharing the same data file.
+
+=eshell-z.el= provides a new command =eshell/z= for cd to frequent directory
+in eshell.
+
+** Usage
+#+BEGIN_SRC console
+~ $ z -h
+usage: z [-rtxh] [regex1 regex2 ... regexn]
+
+    -r, --rank           match by rank only
+    -t, --time           match by recent access only
+    -l, --list           list only
+    -x, --delete         remove the current directory from the datafile
+    -h, --help           show a brief help message
+
+examples:
+
+    z foo         cd to most frecent dir matching foo
+    z foo bar     cd to most frecent dir matching foo, then bar
+    z -r foo      cd to highest ranked dir matching foo
+    z -t foo      cd to most recently accessed dir matching foo
+    z -l foo      list all dirs matching foo (by frecency)
+#+END_SRC
+
+** Initial Setup
+To use this package, add following code to your init.el or .emacs
+#+BEGIN_SRC emacs-lisp
+(require 'eshell-z)
+#+END_SRC
+
