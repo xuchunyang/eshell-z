@@ -6,7 +6,7 @@
 in eshell.
 
 ** Usage
-#+BEGIN_SRC console
+#+BEGIN_SRC
 ~ $ z -h
 usage: z [-rtxh] [regex1 regex2 ... regexn]
 
