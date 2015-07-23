@@ -1,6 +1,6 @@
 * eshell-z
 ** Introduction
-=eshell-z.el= is an Emacs port of [[https://github.com/rupa/z][=z=]]. They can work together by sharing the same data file.
+=eshell-z.el= is an Emacs port of [[https://github.com/rupa/z][z]]. They can work together by sharing the same data file.
 
 =eshell-z.el= provides a new command =eshell/z= for cd to frequent directory
 in eshell.
@@ -25,7 +25,7 @@ examples:
     z -l foo      list all dirs matching foo (by frecency)
 #+END_SRC
 
-** Initial Setup
+** Setup
 To use this package, add following code to your init.el or .emacs
 #+BEGIN_SRC emacs-lisp
 (require 'eshell-z)
