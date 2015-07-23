@@ -153,7 +153,22 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   (if eshell-z-freq-dir-hash-table-file-name
       (eshell-z--write-freq-dir-hash-table)))
 
+(defvar eshell-z--remove-p nil)
+
+(defun eshell-z--remove ()
+  "Remove entry."
+  (if eshell-z--remove-p
+      (progn
+        (unless eshell-z-freq-dir-hash-table
+          (setq eshell-z-freq-dir-hash-table (make-hash-table :test 'equal)))
+        (remhash (expand-file-name (substring default-directory 0 -1))
+                 eshell-z-freq-dir-hash-table)
+        (if eshell-z-freq-dir-hash-table-file-name
+            (eshell-z--write-freq-dir-hash-table))
+        (setq eshell-z--remove-p nil))))
+
 (add-hook 'eshell-post-command-hook #'eshell-z--add)
+(add-hook 'eshell-post-command-hook #'eshell-z--remove 'append)
 
 (defun eshell-z--frecent (value)
   "Calculate rank of a VALUE of `eshell-z-freq-dir-hash-table'.
@@ -184,7 +199,7 @@ Base on frequency and time."
      (?l "list" nil list "list only")
      (?x "delete" nil delete "remove the current directory from the datafile" )
      (?h "help" nil nil "show a brief help message")
-     :usage "[-rtxh] [regex1 regex2 ... regexn]"
+     :usage "[-rtlxh] [regex1 regex2 ... regexn]"
      :post-usage "examples:
 
     z foo         cd to most frecent dir matching foo
@@ -193,43 +208,45 @@ Base on frequency and time."
     z -t foo      cd to most recently accessed dir matching foo
     z -l foo      list all dirs matching foo (by frecency)
 ")
-   (let ((paths (sort (eshell-z--hash-table-values eshell-z-freq-dir-hash-table)
-                      (if rank-only
-                          (lambda (elt1 elt2)
-                            (> (eshell-z--rank elt1)
-                               (eshell-z--rank elt2)))
-                        (if time-only
+   (if delete
+       (setq eshell-z--remove-p t)
+     (let ((paths (sort (eshell-z--hash-table-values eshell-z-freq-dir-hash-table)
+                        (if rank-only
                             (lambda (elt1 elt2)
-                              (> (eshell-z--time elt1)
-                                 (eshell-z--time elt2)))
-                          (lambda (elt1 elt2)
-                            (> (eshell-z--frecent elt1)
-                               (eshell-z--frecent elt2))))))))
-     (if list
-         (eshell-print
-          (mapconcat #'car (nreverse
-                            (seq-filter
+                              (> (eshell-z--rank elt1)
+                                 (eshell-z--rank elt2)))
+                          (if time-only
+                              (lambda (elt1 elt2)
+                                (> (eshell-z--time elt1)
+                                   (eshell-z--time elt2)))
+                            (lambda (elt1 elt2)
+                              (> (eshell-z--frecent elt1)
+                                 (eshell-z--frecent elt2))))))))
+       (if list
+           (eshell-print
+            (mapconcat #'car (nreverse
+                              (seq-filter
+                               (lambda (elt)
+                                 (string-match (mapconcat #'identity args ".*")
+                                               (car elt)))
+                               paths)) "\n"))
+         (if (null args)
+             (eshell/cd (list (completing-read "pattern " paths nil t)))
+           (let ((path (car args))
+                 (case-fold-search (eshell-under-windows-p)))
+             (if (numberp path)
+                 (setq path (number-to-string path)))
+             ;; if we hit enter on a completion just go there
+             (if (file-accessible-directory-p path)
+                 (eshell/cd (list path))
+               (let ((newdir
+                      (caar (seq-filter
                              (lambda (elt)
                                (string-match (mapconcat #'identity args ".*")
                                              (car elt)))
-                             paths)) "\n"))
-       (if (null args)
-           (eshell/cd (list (completing-read "pattern " paths nil t)))
-         (let ((path (car args))
-               (case-fold-search (eshell-under-windows-p)))
-           (if (numberp path)
-               (setq path (number-to-string path)))
-           ;; if we hit enter on a completion just go there
-           (if (file-accessible-directory-p path)
-               (eshell/cd (list path))
-             (let ((newdir
-                    (caar (seq-filter
-                           (lambda (elt)
-                             (string-match (mapconcat #'identity args ".*")
-                                           (car elt)))
-                           paths))))
-               (if (file-accessible-directory-p newdir)
-                   (eshell/cd (list newdir)))))))))
+                             paths))))
+                 (if (file-accessible-directory-p newdir)
+                     (eshell/cd (list newdir))))))))))
    nil))
 
 (provide 'eshell-z)
