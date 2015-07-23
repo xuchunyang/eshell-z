@@ -137,7 +137,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
                    (expand-file-name (concat (getenv "HOME") "/")))
     (let* (
            ;; Remove end slash, z doesn't use it
-           (key (substring default-directory 0 -1))
+           (key (expand-file-name (substring default-directory 0 -1)))
            (val (gethash key eshell-z-freq-dir-hash-table)))
       (if val
           (puthash key (cons key
