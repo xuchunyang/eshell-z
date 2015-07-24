@@ -199,6 +199,7 @@ Base on frequency and time."
 ;; TODO: eshell command line arguments completion with pcomplete
 ;; TODO: Implement the -c option
 ;; TODO: Fix the internal representation of time, string => number
+;; TODO: Improve the -l option to display more info (like current rank)
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
   (eshell-eval-using-options
