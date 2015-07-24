@@ -62,6 +62,7 @@
 (require 'seq)
 (require 'eshell)
 (require 'em-dirs)
+(require 'pcomplete)
 
 (defcustom eshell-z-freq-dir-hash-table-file-name
   (or (getenv "_Z_DATA")
@@ -196,7 +197,6 @@ Base on frequency and time."
   "Get time of a VALUE of `eshell-z-freq-dir-hash-table'."
   (string-to-number (plist-get (cdr value) :time)))
 
-;; TODO: eshell command line arguments completion with pcomplete
 ;; TODO: Implement the -c option
 ;; TODO: Fix the internal representation of time, string => number
 ;; TODO: Improve the -l option to display more info (like current rank)
@@ -258,6 +258,19 @@ Base on frequency and time."
                  (if (file-accessible-directory-p newdir)
                      (eshell/cd (list newdir))))))))))
    nil))
+
+(defun pcomplete/z ()
+  "Completion for the `z' command."
+  (while t
+    (if (pcomplete-match "^-" 0)
+        (cond
+         ;; Long options
+         ((pcomplete-match "^--" 0)
+          (pcomplete-here* '("--rank" "--time" "--list" "--delete" "--help")))
+         ;; Short options
+         (t (pcomplete-opt "rtlxh")))
+      (pcomplete-here* (eshell-z--hash-table-values
+                        eshell-z-freq-dir-hash-table)))))
 
 (provide 'eshell-z)
 ;;; eshell-z.el ends here
