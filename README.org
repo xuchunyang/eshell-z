@@ -1,4 +1,5 @@
 * =eshell-z=
+[[http://melpa.org/#/eshell-z][http://melpa.org/packages/eshell-z-badge.svg]]
 ** Introduction
 The =eshell-z= package is an Emacs port of [[https://github.com/rupa/z][z]].
 It keeps track of where you’ve been and how many commands you invoke there,
