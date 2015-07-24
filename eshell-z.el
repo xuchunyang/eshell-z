@@ -59,6 +59,7 @@
 
 ;;; Code:
 
+(require 'seq)
 (require 'eshell)
 (require 'em-dirs)
 
