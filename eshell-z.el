@@ -183,13 +183,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
              ;; $HOME isn't worth matching
              (string= current-directory (eshell-z--expand-directory-name "~"))
              ;; don't track excluded directory trees
-             (catch 'seq--break
-               (seq-doseq (root eshell-z-exclude-dirs)
-                 (when (and (stringp root)
-                            (eshell-z--directory-within-p
-                             root current-directory))
-                   (throw 'seq--break t)))
-               nil))
+             (seq-some-p (lambda (root)
+                           (and (stringp root)
+                                (eshell-z--directory-within-p
+                                 root current-directory)))
+                         eshell-z-exclude-dirs))
       (let* (
              ;; Remove end slash, z doesn't use it
              (key current-directory)
