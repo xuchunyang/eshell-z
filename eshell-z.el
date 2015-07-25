@@ -72,6 +72,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   :type 'file
   :group 'eshell-dirs)
 
+(defcustom eshell-z-exclude-dirs '("~")
+  "A list of directories to exclude."
+  :type '(repeat (choice string))
+  :group 'eshell-dirs)
+
 (defvar eshell-z-freq-dir-hash-table nil
   "The frequent directory that Eshell was in.")
 
@@ -144,24 +149,26 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
       (eshell-z--read-freq-dir-hash-table))
   (unless eshell-z-freq-dir-hash-table
     (setq eshell-z-freq-dir-hash-table (make-hash-table :test 'equal)))
-  ;; $HOME isn't worth matching
-  (unless (string= (eshell-z--expand-directory-name default-directory)
-                   (eshell-z--expand-directory-name "~"))
-    (let* (
-           ;; Remove end slash, z doesn't use it
-           (key (eshell-z--expand-directory-name default-directory))
-           (val (gethash key eshell-z-freq-dir-hash-table)))
-      (if val
+  (let ((current-directory (eshell-z--expand-directory-name default-directory)))
+    ;; $HOME isn't worth matching
+    (unless (member current-directory
+                    (mapcar #'eshell-z--expand-directory-name eshell-z-exclude-dirs))
+      (let* (
+             ;; Remove end slash, z doesn't use it
+             (key current-directory)
+             (val (gethash key eshell-z-freq-dir-hash-table)))
+        (if val
+            (puthash key (cons key
+                               (list :freq (1+ (plist-get (cdr val) :freq))
+                                     :time (number-to-string
+                                            (truncate (time-to-seconds)))))
+                     eshell-z-freq-dir-hash-table)
           (puthash key (cons key
-                             (list :freq (1+ (plist-get (cdr val) :freq))
+                             (list :freq 1
                                    :time (number-to-string
                                           (truncate (time-to-seconds)))))
-                   eshell-z-freq-dir-hash-table)
-        (puthash key (cons key
-                           (list :freq 1
-                                 :time (number-to-string
-                                        (truncate (time-to-seconds)))))
-                 eshell-z-freq-dir-hash-table))))
+                   eshell-z-freq-dir-hash-table)))))
+
   (if eshell-z-freq-dir-hash-table-file-name
       (eshell-z--write-freq-dir-hash-table)))
 
