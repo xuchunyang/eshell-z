@@ -243,16 +243,17 @@ Base on frequency and time."
   "Get time of a VALUE of `eshell-z-freq-dir-hash-table'."
   (plist-get (cdr value) :time))
 
-;; TODO: Implement the -c option
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
   (eshell-eval-using-options
    "z" args
-   '((?r "rank" nil rank-only "match by rank only")
-     (?t "time" nil time-only "match by recent access only")
-     (?l "list" nil list "list only")
-     (?x "delete" nil delete "remove the current directory from the datafile" )
+   '((?c "current" nil current
+         "estrict matches to subdirectories of the current directory")
      (?h "help" nil nil "show a brief help message")
+     (?l "list" nil list "list only")
+     (?r "rank" nil rank-only "match by rank only")
+     (?t "time" nil time-only "match by recent access only")
+     (?x "delete" nil delete "remove the current directory from the datafile" )
      :usage "[-rtlxh] [regex1 regex2 ... regexn]"
      :post-usage "examples:
 
@@ -275,7 +276,9 @@ Base on frequency and time."
                                    (eshell-z--time elt2)))
                             (lambda (elt1 elt2)
                               (> (eshell-z--frecent elt1)
-                                 (eshell-z--frecent elt2))))))))
+                                 (eshell-z--frecent elt2)))))))
+           (current-directory (eshell-z--expand-directory-name
+                               default-directory)))
        (if list
            (eshell-print
             (mapconcat
@@ -289,8 +292,12 @@ Base on frequency and time."
              (nreverse
               (seq-filter
                (lambda (elt)
-                 (string-match (mapconcat #'identity args ".*")
-                               (car elt)))
+                 (string-match
+                  (mapconcat #'identity
+                             (if current (append (list current-directory) args)
+                               args)
+                             ".*")
+                  (car elt)))
                paths)) "\n"))
          (if (null args)
              (eshell/cd (list (completing-read "pattern " paths nil t)))
@@ -302,11 +309,17 @@ Base on frequency and time."
              (if (file-accessible-directory-p path)
                  (eshell/cd (list path))
                (let ((newdir
-                      (caar (seq-filter
-                             (lambda (elt)
-                               (string-match (mapconcat #'identity args ".*")
-                                             (car elt)))
-                             paths))))
+                      (caar
+                       (seq-filter
+                        (lambda (elt)
+                          (string-match
+                           (mapconcat #'identity
+                                      (if current
+                                          (append (list current-directory) args)
+                                        args)
+                                      ".*")
+                           (car elt)))
+                        paths))))
                  (if (file-accessible-directory-p newdir)
                      (eshell/cd (list newdir))))))))))
    nil))
