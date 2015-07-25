@@ -92,4 +92,5 @@ z supports basic tab completion, press TAB to complete on options and
 directories. This is implemented with =pcomplete=.
 
 ** See also
-=man 1 z= or [[https://github.com/rupa/z][z]].
+- [[https://github.com/rupa/z][rupa/z]]
+- [[https://github.com/wting/autojump][wting/autojump]] and [[https://github.com/coldnew/eshell-autojump][coldnew/eshell-autojump]]
