@@ -186,6 +186,8 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
             (eshell-z--write-freq-dir-hash-table))
         (setq eshell-z--remove-p nil))))
 
+;; FIXME: It seems making these hook (and above global variables) be buffer-local
+;; is more elegant, but I don't know how for now.
 (add-hook 'eshell-post-command-hook #'eshell-z--add)
 (add-hook 'eshell-post-command-hook #'eshell-z--remove 'append)
 
