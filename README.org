@@ -14,11 +14,12 @@ eshell.
 ~ $ z -h
 usage: z [-rtlxh] [regex1 regex2 ... regexn]
 
+    -c, --current        estrict matches to subdirectories of the current directory
+    -h, --help           show a brief help message
+    -l, --list           list only
     -r, --rank           match by rank only
     -t, --time           match by recent access only
-    -l, --list           list only
     -x, --delete         remove the current directory from the datafile
-    -h, --help           show a brief help message
 
 examples:
 
