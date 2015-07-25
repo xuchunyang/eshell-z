@@ -330,18 +330,19 @@ Base on frequency and time."
              ;; if we hit enter on a completion just go there
              (if (file-accessible-directory-p path)
                  (eshell/cd (list path))
-               (let ((newdir
-                      (caar
-                       (seq-filter
-                        (lambda (elt)
-                          (string-match
-                           (mapconcat #'identity
-                                      (if current
-                                          (append (list current-directory) args)
-                                        args)
-                                      ".*")
-                           (car elt)))
-                        paths))))
+               (let* ((matches
+                       (nreverse
+                        (seq-filter
+                         (lambda (elt)
+                           (string-match
+                            (mapconcat #'identity
+                                       (if current
+                                           (append (list current-directory) args)
+                                         args) ".*")
+                            (car elt)))
+                         paths)))
+                      (newdir (or (eshell-z--common-root (mapcar #'car matches))
+                                  (caar matches))))
                  (if (file-accessible-directory-p newdir)
                      (eshell/cd (list newdir))))))))))
    nil))
