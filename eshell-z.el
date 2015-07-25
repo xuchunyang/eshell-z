@@ -244,7 +244,6 @@ Base on frequency and time."
   (plist-get (cdr value) :time))
 
 ;; TODO: Implement the -c option
-;; TODO: Improve the -l option to display more info (like current rank)
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
   (eshell-eval-using-options
@@ -279,12 +278,20 @@ Base on frequency and time."
                                  (eshell-z--frecent elt2))))))))
        (if list
            (eshell-print
-            (mapconcat #'car (nreverse
-                              (seq-filter
-                               (lambda (elt)
-                                 (string-match (mapconcat #'identity args ".*")
-                                               (car elt)))
-                               paths)) "\n"))
+            (mapconcat
+             (lambda (elt)
+               (format "%-10d %s"
+                       (if rank-only (eshell-z--rank elt)
+                         (if time-only (- (eshell-z--time elt)
+                                          (truncate (time-to-seconds)))
+                           (eshell-z--frecent elt)))
+                       (car elt)))
+             (nreverse
+              (seq-filter
+               (lambda (elt)
+                 (string-match (mapconcat #'identity args ".*")
+                               (car elt)))
+               paths)) "\n"))
          (if (null args)
              (eshell/cd (list (completing-read "pattern " paths nil t)))
            (let ((path (car args))
