@@ -28,9 +28,6 @@
 ;; and provides a convenient way to jump to the directories you actually
 ;; use. =eshell-z= and =z= can work together by sharing the same data file.
 ;;
-;; =eshell-z= provides a new command =eshell/z= for cd to frequent directory in
-;; eshell.
-;;
 ;;; Usage:
 ;;
 ;;  ~ $ z -h
