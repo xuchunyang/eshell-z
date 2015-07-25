@@ -173,6 +173,19 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 ;; (eshell-z--directory-within-p "/foo" "/foobar")
 ;; => nil
 
+(defun eshell-z--common-root (dirs)
+  "Return one directory of DIRS which is the root of all the rest directories, if any."
+  (let ((root (car (sort dirs (lambda (s1 s2) (< (length s1) (length s2)))))))
+    (if (seq-every-p (lambda (elt) (eshell-z--directory-within-p root elt))
+                     dirs)
+        root)))
+
+;; (let ((dirs '("/Users/xcy/repos/mu/lib"
+;;               "/Users/xcy/repos/mu"
+;;               "/Users/xcy/repos/mu/guile")))
+;;   (foo--root dirs))
+;; => "/Users/xcy/repos/mu"
+
 (defun eshell-z--add ()
   "Add entry."
   (if eshell-z-freq-dir-hash-table-file-name
@@ -281,25 +294,30 @@ Base on frequency and time."
            (current-directory (eshell-z--expand-directory-name
                                default-directory)))
        (if list
-           (eshell-print
-            (mapconcat
-             (lambda (elt)
-               (format "%-10d %s"
-                       (if rank-only (eshell-z--rank elt)
-                         (if time-only (- (eshell-z--time elt)
-                                          (truncate (time-to-seconds)))
-                           (eshell-z--frecent elt)))
+           (let ((matches
+                  (nreverse
+                   (seq-filter
+                    (lambda (elt)
+                      (string-match
+                       (mapconcat #'identity
+                                  (if current
+                                      (append (list current-directory) args)
+                                    args) ".*")
                        (car elt)))
-             (nreverse
-              (seq-filter
+                    paths))))
+             (let ((common-root (eshell-z--common-root (mapcar #'car matches))))
+               (when common-root
+                 (eshell-print (format "%-10s %s\n" "common:" common-root))))
+             (eshell-print
+              (mapconcat
                (lambda (elt)
-                 (string-match
-                  (mapconcat #'identity
-                             (if current (append (list current-directory) args)
-                               args)
-                             ".*")
-                  (car elt)))
-               paths)) "\n"))
+                 (format "%-10d %s"
+                         (if rank-only (eshell-z--rank elt)
+                           (if time-only (- (eshell-z--time elt)
+                                            (truncate (time-to-seconds)))
+                             (eshell-z--frecent elt)))
+                         (car elt)))
+               matches "\n")))
          (if (null args)
              (eshell/cd (list (completing-read "pattern " paths nil t)))
            (let ((path (car args))
