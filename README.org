@@ -9,6 +9,21 @@ use. =eshell-z= and =z= can work together by sharing the same data file.
 =eshell-z= provides a new command =eshell/z= for cd to frequent directory in
 eshell.
 
+** Table of Contents                                                    :TOC@4:
+ - [[#eshell-z][=eshell-z=]]
+     - [[#introduction][Introduction]]
+     - [[#install][Install]]
+         - [[#melpa][MELPA]]
+         - [[#manually][Manually]]
+     - [[#setup][Setup]]
+     - [[#usage][Usage]]
+     - [[#notations][Notations]]
+         - [[#aging][Aging]]
+         - [[#frecency][Frecency]]
+         - [[#common][Common]]
+     - [[#tab-completion][Tab Completion]]
+     - [[#see-also][See also]]
+
 ** Install
 *** MELPA
 After setting up [[http://melpa.org][MELPA]] as a repository, use =M-x package-install eshell-z= or
