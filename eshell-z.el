@@ -96,7 +96,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
                       (let* ((entries (split-string elt "|"))
                              (key (car entries))
                              (freq (string-to-number (cadr entries)))
-                             (time (car (last entries))))
+                             (time (string-to-number (car (last entries)))))
                         (puthash key (cons key (list :freq freq :time time))
                                  m)))
                     (with-temp-buffer
@@ -132,7 +132,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
           (lambda (val)
             (let ((dir (car val))
                   (freq (number-to-string (plist-get (cdr val) :freq)))
-                  (time (plist-get (cdr val) :time)))
+                  (time (number-to-string (plist-get (cdr val) :time))))
               (format "%s|%s|%s" dir freq time)))
           (eshell-z--hash-table-values eshell-z-freq-dir-hash-table) "\n"))
         (insert "\n")
@@ -195,13 +195,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
         (if val
             (puthash key (cons key
                                (list :freq (1+ (plist-get (cdr val) :freq))
-                                     :time (number-to-string
-                                            (truncate (time-to-seconds)))))
+                                     :time (truncate (time-to-seconds))))
                      eshell-z-freq-dir-hash-table)
           (puthash key (cons key
                              (list :freq 1
-                                   :time (number-to-string
-                                          (truncate (time-to-seconds)))))
+                                   :time (truncate (time-to-seconds))))
                    eshell-z-freq-dir-hash-table)))))
 
   (if eshell-z-freq-dir-hash-table-file-name
@@ -230,7 +228,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   "Calculate rank of a VALUE of `eshell-z-freq-dir-hash-table'.
 Base on frequency and time."
   (let* ((freq (plist-get (cdr value) :freq))
-         (time (string-to-number (plist-get (cdr value) :time)))
+         (time (plist-get (cdr value) :time))
          (dx (- (truncate (time-to-seconds)) time)))
     (cond ((< dx 3600) (* freq 4))
           ((< dx 86400) (* freq 2))
@@ -243,10 +241,9 @@ Base on frequency and time."
 
 (defun eshell-z--time (value)
   "Get time of a VALUE of `eshell-z-freq-dir-hash-table'."
-  (string-to-number (plist-get (cdr value) :time)))
+  (plist-get (cdr value) :time))
 
 ;; TODO: Implement the -c option
-;; TODO: Fix the internal representation of time, string => number
 ;; TODO: Improve the -l option to display more info (like current rank)
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
