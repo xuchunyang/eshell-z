@@ -66,7 +66,7 @@
 
 (defcustom eshell-z-freq-dir-hash-table-file-name
   (or (getenv "_Z_DATA")
-      (expand-file-name ".z" (getenv "HOME")))
+      (expand-file-name "~/.z"))
   "If non-nil, name of the file to read/write the freq-dir-hash-table.
 If it is nil, the freq-dir-hash-table will not be written to disk."
   :type 'file
@@ -134,6 +134,10 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
         (let ((jka-compr-compression-info-list nil))
           (write-region (point-min) (point-max) file nil 'silent)))))))
 
+(defun eshell-z--expand-directory-name (directory)
+  "Expand and remove ending slash of DIRECTORY."
+  (expand-file-name (directory-file-name directory)))
+
 (defun eshell-z--add ()
   "Add entry."
   (if eshell-z-freq-dir-hash-table-file-name
@@ -141,11 +145,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   (unless eshell-z-freq-dir-hash-table
     (setq eshell-z-freq-dir-hash-table (make-hash-table :test 'equal)))
   ;; $HOME isn't worth matching
-  (unless (string= (directory-file-name default-directory)
-                   (directory-file-name (getenv "HOME")))
+  (unless (string= (eshell-z--expand-directory-name default-directory)
+                   (eshell-z--expand-directory-name "~"))
     (let* (
            ;; Remove end slash, z doesn't use it
-           (key (directory-file-name default-directory))
+           (key (eshell-z--expand-directory-name default-directory))
            (val (gethash key eshell-z-freq-dir-hash-table)))
       (if val
           (puthash key (cons key
@@ -169,7 +173,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
       (progn
         (unless eshell-z-freq-dir-hash-table
           (setq eshell-z-freq-dir-hash-table (make-hash-table :test 'equal)))
-        (remhash (directory-file-name default-directory)
+        (remhash (eshell-z--expand-directory-name default-directory)
                  eshell-z-freq-dir-hash-table)
         (if eshell-z-freq-dir-hash-table-file-name
             (eshell-z--write-freq-dir-hash-table))
