@@ -9,6 +9,24 @@ use. =eshell-z= and =z= can work together by sharing the same data file.
 =eshell-z= provides a new command =eshell/z= for cd to frequent directory in
 eshell.
 
+** Install
+*** MELPA
+After setting up [[http://melpa.org][MELPA]] as a repository, use =M-x package-install eshell-z= or
+your preferred method.
+
+*** Manually
+Add eshell-z to your =load-path=. Something like
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "path/to/eshell-z")
+#+END_SRC
+
+** Setup
+To use this package, add following code to your init.el or .emacs
+#+BEGIN_SRC emacs-lisp
+(require 'eshell-z)
+#+END_SRC
+
 ** Usage
 #+BEGIN_SRC
 ~ $ z -h
@@ -30,9 +48,36 @@ examples:
     z -l foo      list all dirs matching foo (by frecency)
 #+END_SRC
 
-** Setup
-To use this package, add following code to your init.el or .emacs
-#+BEGIN_SRC emacs-lisp
-(require 'eshell-z)
-#+END_SRC
+** Notations
 
+*NOTICE* _This section is copied from the manpage of [[https://github.com/rupa/z][z]]._
+
+*** Aging
+The rank of directories maintained by z undergoes aging based on a simple
+formula. The rank of each entry is incremented every time it is accessed.  When
+the sum of ranks is over 9000, all ranks are multiplied by 0.99. Entries with a
+rank lower than 1 are forgotten.
+
+*** Frecency
+Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank
+that depends on how often and how recently something occurred. As far as I know,
+Mozilla came up with the term.
+
+To z, a directory that has low ranking but has been accessed recently will
+quickly  have  higher rank than a directory accessed frequently a long time
+ago.
+
+Frecency is determined at runtime.
+
+*** Common
+When multiple directories match all queries, and they all have a common prefix,
+z will cd to the shortest matching directory, without regard to priority.  This
+has been in effect, if  undocumented, for quite some time, but should probably
+be configurable or reconsidered.
+
+** Tab Completion
+z supports basic tab completion, press TAB to complete on options and
+directories. This is implemented with =pcomplete=.
+
+** See also
+=man 1 z= or [[https://github.com/rupa/z][z]].
