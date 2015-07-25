@@ -95,9 +95,9 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
               (mapc (lambda (elt)
                       (let* ((entries (split-string elt "|"))
                              (key (car entries))
-                             (freq (string-to-number (cadr entries)))
+                             (rank (string-to-number (cadr entries)))
                              (time (string-to-number (car (last entries)))))
-                        (puthash key (cons key (list :freq freq :time time))
+                        (puthash key (cons key (list :rank rank :time time))
                                  m)))
                     (with-temp-buffer
                       (let ((jka-compr-compression-info-list nil))
@@ -131,9 +131,9 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
          (mapconcat
           (lambda (val)
             (let ((dir (car val))
-                  (freq (number-to-string (plist-get (cdr val) :freq)))
+                  (rank (number-to-string (plist-get (cdr val) :rank)))
                   (time (number-to-string (plist-get (cdr val) :time))))
-              (format "%s|%s|%s" dir freq time)))
+              (format "%s|%s|%s" dir rank time)))
           (eshell-z--hash-table-values eshell-z-freq-dir-hash-table) "\n"))
         (insert "\n")
         (let ((jka-compr-compression-info-list nil))
@@ -194,11 +194,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
              (val (gethash key eshell-z-freq-dir-hash-table)))
         (if val
             (puthash key (cons key
-                               (list :freq (1+ (plist-get (cdr val) :freq))
+                               (list :rank (1+ (plist-get (cdr val) :rank))
                                      :time (truncate (time-to-seconds))))
                      eshell-z-freq-dir-hash-table)
           (puthash key (cons key
-                             (list :freq 1
+                             (list :rank 1
                                    :time (truncate (time-to-seconds))))
                    eshell-z-freq-dir-hash-table)))))
 
@@ -227,17 +227,17 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 (defun eshell-z--frecent (value)
   "Calculate rank of a VALUE of `eshell-z-freq-dir-hash-table'.
 Base on frequency and time."
-  (let* ((freq (plist-get (cdr value) :freq))
+  (let* ((rank (plist-get (cdr value) :rank))
          (time (plist-get (cdr value) :time))
          (dx (- (truncate (time-to-seconds)) time)))
-    (cond ((< dx 3600) (* freq 4))
-          ((< dx 86400) (* freq 2))
-          ((< dx 604800) (/ freq 2))
-          (t (/ freq 4)))))
+    (cond ((< dx 3600) (* rank 4))
+          ((< dx 86400) (* rank 2))
+          ((< dx 604800) (/ rank 2))
+          (t (/ rank 4)))))
 
 (defun eshell-z--rank (value)
-  "Get freq of a VALUE of `eshell-z-freq-dir-hash-table'."
-  (plist-get (cdr value) :freq))
+  "Get rank of a VALUE of `eshell-z-freq-dir-hash-table'."
+  (plist-get (cdr value) :rank))
 
 (defun eshell-z--time (value)
   "Get time of a VALUE of `eshell-z-freq-dir-hash-table'."
