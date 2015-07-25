@@ -72,8 +72,8 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   :type 'file
   :group 'eshell-dirs)
 
-(defcustom eshell-z-exclude-dirs '("~")
-  "A list of directories to exclude."
+(defcustom eshell-z-exclude-dirs '("/tmp/" "~/.emacs.d/elpa")
+  "A list of directory trees to exclude."
   :type '(repeat (choice string))
   :group 'eshell-dirs)
 
@@ -143,6 +143,35 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   "Expand and remove ending slash of DIRECTORY."
   (expand-file-name (directory-file-name directory)))
 
+;; (eshell-z--expand-directory-name "~")
+;; => "/Users/xcy"
+;; (eshell-z--expand-directory-name "~/.emacs.d/")
+;; => "/Users/xcy/.emacs.d"
+
+(defun eshell-z--directory-within-p (root directory)
+  "Return non-nil if DIRECTORY is a sub-directory of root or root itself."
+  (let ((root (eshell-z--expand-directory-name root))
+        (directory (eshell-z--expand-directory-name directory)))
+    (if (string= root directory)
+        t
+      (let ((len1 (length root))
+            (len2 (length directory)))
+        (if (< len2 len1)
+            nil
+          (if (and (string= root (substring directory 0 len1))
+                   (= (aref directory len1) ?/))
+              t
+            nil))))))
+
+;; (eshell-z--directory-within-p "~/.emacs.d" "~/.emacs.d/elpa")
+;; => t
+;; (eshell-z--directory-within-p "/tmp" "/tmp/")
+;; => t
+;; (eshell-z--directory-within-p "/tmp" "~/tmp")
+;; => nil
+;; (eshell-z--directory-within-p "/foo" "/foobar")
+;; => nil
+
 (defun eshell-z--add ()
   "Add entry."
   (if eshell-z-freq-dir-hash-table-file-name
@@ -150,9 +179,13 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   (unless eshell-z-freq-dir-hash-table
     (setq eshell-z-freq-dir-hash-table (make-hash-table :test 'equal)))
   (let ((current-directory (eshell-z--expand-directory-name default-directory)))
-    ;; $HOME isn't worth matching
-    (unless (member current-directory
-                    (mapcar #'eshell-z--expand-directory-name eshell-z-exclude-dirs))
+    (unless (or
+             ;; $HOME isn't worth matching
+             (string= current-directory (eshell-z--expand-directory-name "~"))
+             (seq-some-p (lambda (root)
+                           (eshell-z--directory-within-p
+                            root current-directory))
+                         eshell-z-exclude-dirs))
       (let* (
              ;; Remove end slash, z doesn't use it
              (key current-directory)
