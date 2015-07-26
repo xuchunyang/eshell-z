@@ -328,16 +328,15 @@ Base on frequency and time."
              (if (file-accessible-directory-p path)
                  (eshell/cd (list path))
                (let* ((matches
-                       (nreverse
-                        (seq-filter
-                         (lambda (elt)
-                           (string-match
-                            (mapconcat #'identity
-                                       (if current
-                                           (append (list current-directory) args)
-                                         args) ".*")
-                            (car elt)))
-                         paths)))
+                       (seq-filter
+                        (lambda (elt)
+                          (string-match
+                           (mapconcat #'identity
+                                      (if current
+                                          (append (list current-directory) args)
+                                        args) ".*")
+                           (car elt)))
+                        paths))
                       (newdir (or (eshell-z--common-root (mapcar #'car matches))
                                   (caar matches))))
                  (if (file-accessible-directory-p newdir)
