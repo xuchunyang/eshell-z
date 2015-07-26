@@ -31,7 +31,7 @@
 ;;; Usage:
 ;;
 ;;  ~ $ z -h
-;;  usage: z [-rtlxh] [regex1 regex2 ... regexn]
+;;  usage: z [-chlrtx] [regex1 regex2 ... regexn]
 ;;
 ;;      -c, --current        estrict matches to subdirectories of the current directory
 ;;      -h, --help           show a brief help message
@@ -265,7 +265,7 @@ Base on frequency and time."
      (?r "rank" nil rank-only "match by rank only")
      (?t "time" nil time-only "match by recent access only")
      (?x "delete" nil delete "remove the current directory from the datafile" )
-     :usage "[-rtlxh] [regex1 regex2 ... regexn]"
+     :usage "[-chlrtx] [regex1 regex2 ... regexn]"
      :post-usage "examples:
 
     z foo         cd to most frecent dir matching foo
@@ -350,9 +350,9 @@ Base on frequency and time."
         (cond
          ;; Long options
          ((pcomplete-match "^--" 0)
-          (pcomplete-here* '("--rank" "--time" "--list" "--delete" "--help")))
+          (pcomplete-here* '("--current" "--help" "--list" "--rank" "--time" "--delete")))
          ;; Short options
-         (t (pcomplete-opt "rtlxh")))
+         (t (pcomplete-opt "chlrtx")))
       (pcomplete-here* (eshell-z--hash-table-values
                         eshell-z-freq-dir-hash-table)))))
 

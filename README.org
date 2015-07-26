@@ -42,7 +42,7 @@ To use this package, add following code to your init.el or .emacs
 ** Usage
 #+BEGIN_SRC
 ~ $ z -h
-usage: z [-rtlxh] [regex1 regex2 ... regexn]
+usage: z [-chlrtx] [regex1 regex2 ... regexn]
 
     -c, --current        estrict matches to subdirectories of the current directory
     -h, --help           show a brief help message
