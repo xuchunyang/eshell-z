@@ -243,8 +243,8 @@ Base on frequency and time."
          (dx (- (truncate (time-to-seconds)) time)))
     (cond ((< dx 3600) (* rank 4))
           ((< dx 86400) (* rank 2))
-          ((< dx 604800) (/ rank 2))
-          (t (/ rank 4)))))
+          ((< dx 604800) (/ rank 2.0))
+          (t (/ rank 4.0)))))
 
 (defun eshell-z--rank (value)
   "Get rank of a VALUE of `eshell-z-freq-dir-hash-table'."
@@ -253,6 +253,15 @@ Base on frequency and time."
 (defun eshell-z--time (value)
   "Get time of a VALUE of `eshell-z-freq-dir-hash-table'."
   (plist-get (cdr value) :time))
+
+(defun eshell-z--float-to-string (number)
+  "Format number for the list option."
+  (let* ((int (truncate number))
+         (result (if (= int number) int
+                   number)))
+    (if (integerp result)
+        (format "%-10d" result)
+      (format "%-10.1f" result))))
 
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
@@ -311,12 +320,14 @@ Base on frequency and time."
              (eshell-print
               (mapconcat
                (lambda (elt)
-                 (format "%-10d %s"
-                         (if rank-only (eshell-z--rank elt)
-                           (if time-only (- (eshell-z--time elt)
-                                            (truncate (time-to-seconds)))
-                             (eshell-z--frecent elt)))
-                         (car elt)))
+                 (format
+                  "%s %s"
+                  (eshell-z--float-to-string
+                   (if rank-only (eshell-z--rank elt)
+                     (if time-only (- (eshell-z--time elt)
+                                      (truncate (time-to-seconds)))
+                       (eshell-z--frecent elt))))
+                  (car elt)))
                matches "\n")))
          (if (null args)
              (eshell/cd (list (completing-read "pattern " paths nil t)))
