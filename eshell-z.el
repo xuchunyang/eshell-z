@@ -311,11 +311,9 @@ Base on frequency and time."
                                     args) ".*")
                        (car elt)))
                     paths))))
-             ;; Display common root directory for all matches if any
-             (when (> (length matches) 1) ; Not if only one match
-               (let ((common-root (eshell-z--common-root (mapcar #'car matches))))
-                 (when common-root
-                   (eshell-print (format "%-10s %s\n" "common:" common-root)))))
+             (let ((common-root (eshell-z--common-root (mapcar #'car matches))))
+               (when common-root
+                 (eshell-print (format "%-10s %s\n" "common:" common-root))))
              ;; Display all matches
              (eshell-print
               (mapconcat
