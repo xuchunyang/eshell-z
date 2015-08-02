@@ -172,7 +172,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 
 (defun eshell-z--common-root (dirs)
   "Return one directory of DIRS which is the root of all the rest directories, if any."
-  (let ((root (car (sort dirs (lambda (s1 s2) (< (length s1) (length s2)))))))
+  (let ((root (car (sort (copy-sequence dirs) (lambda (s1 s2) (< (length s1) (length s2)))))))
     (if (seq-every-p (lambda (elt) (eshell-z--directory-within-p root elt))
                      dirs)
         root)))
@@ -180,7 +180,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 ;; (let ((dirs '("/Users/xcy/repos/mu/lib"
 ;;               "/Users/xcy/repos/mu"
 ;;               "/Users/xcy/repos/mu/guile")))
-;;   (foo--root dirs))
+;;   (eshell-z--common-root dirs))
 ;; => "/Users/xcy/repos/mu"
 
 (defun eshell-z--add ()
