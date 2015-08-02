@@ -348,7 +348,7 @@ Base on frequency and time."
                         paths))
                       (newdir (or (eshell-z--common-root (mapcar #'car matches))
                                   (caar matches))))
-                 (if (file-accessible-directory-p newdir)
+                 (if (and newdir (file-accessible-directory-p newdir))
                      (eshell/cd (list newdir))))))))))
    nil))
 
