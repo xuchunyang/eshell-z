@@ -141,6 +141,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   "Expand and remove ending slash of DIRECTORY."
   (expand-file-name (directory-file-name directory)))
 
+;;; TODO: Delete these or move to a separate test file
 ;; (eshell-z--expand-directory-name "~")
 ;; => "/Users/xcy"
 ;; (eshell-z--expand-directory-name "~/.emacs.d/")
@@ -263,6 +264,7 @@ Base on frequency and time."
         (format "%-10d" result)
       (format "%-10.1f" result))))
 
+;;; TODO: DRY
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
   (eshell-eval-using-options
