@@ -329,8 +329,7 @@ Base on frequency and time."
                matches "\n")))
          (if (null args)
              (eshell/cd (list (completing-read "pattern " paths nil t)))
-           (let ((path (car args))
-                 (case-fold-search (eshell-under-windows-p)))
+           (let ((path (car args)))
              (if (numberp path)
                  (setq path (number-to-string path)))
              ;; if we hit enter on a completion just go there
