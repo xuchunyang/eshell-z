@@ -141,12 +141,6 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   "Expand and remove ending slash of DIRECTORY."
   (expand-file-name (directory-file-name directory)))
 
-;;; TODO: Delete these or move to a separate test file
-;; (eshell-z--expand-directory-name "~")
-;; => "/Users/xcy"
-;; (eshell-z--expand-directory-name "~/.emacs.d/")
-;; => "/Users/xcy/.emacs.d"
-
 (defun eshell-z--directory-within-p (root directory)
   "Return non-nil if DIRECTORY is a sub-directory of root or root itself."
   (let ((root (eshell-z--expand-directory-name root))
@@ -162,27 +156,12 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
               t
             nil))))))
 
-;; (eshell-z--directory-within-p "~/.emacs.d" "~/.emacs.d/elpa")
-;; => t
-;; (eshell-z--directory-within-p "/tmp" "/tmp/")
-;; => t
-;; (eshell-z--directory-within-p "/tmp" "~/tmp")
-;; => nil
-;; (eshell-z--directory-within-p "/foo" "/foobar")
-;; => nil
-
 (defun eshell-z--common-root (dirs)
   "Return one directory of DIRS which is the root of all the rest directories, if any."
   (let ((root (car (sort (copy-sequence dirs) (lambda (s1 s2) (< (length s1) (length s2)))))))
     (if (seq-every-p (lambda (elt) (eshell-z--directory-within-p root elt))
                      dirs)
         root)))
-
-;; (let ((dirs '("/Users/xcy/repos/mu/lib"
-;;               "/Users/xcy/repos/mu"
-;;               "/Users/xcy/repos/mu/guile")))
-;;   (eshell-z--common-root dirs))
-;; => "/Users/xcy/repos/mu"
 
 (defun eshell-z--add ()
   "Add entry."
