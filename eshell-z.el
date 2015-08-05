@@ -345,5 +345,27 @@ Base on frequency and time."
       (pcomplete-here* (eshell-z--hash-table-values
                         eshell-z-freq-dir-hash-table)))))
 
+;;;###autoload
+(defun eshell-z (dir)
+  "Switch to eshell and change directory to DIR."
+  (interactive
+   (list (let ((paths
+                (sort (eshell-z--hash-table-values eshell-z-freq-dir-hash-table)
+                      (lambda (elt1 elt2)
+                        (> (eshell-z--frecent elt1)
+                           (eshell-z--frecent elt2))))))
+           (completing-read "pattern " paths nil t))))
+  (let ((cd-eshell (lambda ()
+                     (eshell-kill-input)
+                     (goto-char (point-max))
+                     (insert
+                      (format "cd '%s'" dir))
+                     (eshell-send-input))))
+    (if (get-buffer "*eshell*")
+        (switch-to-buffer "*eshell*")
+      (call-interactively 'eshell))
+    (unless (get-buffer-process (current-buffer))
+      (funcall cd-eshell))))
+
 (provide 'eshell-z)
 ;;; eshell-z.el ends here
