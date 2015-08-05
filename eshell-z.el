@@ -141,8 +141,8 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   "Expand and remove ending slash of DIRECTORY."
   (expand-file-name (directory-file-name directory)))
 
-(defun eshell-z--directory-within-p (root directory)
-  "Return non-nil if DIRECTORY is a sub-directory of root or root itself."
+(defun eshell-z--directory-within-p (directory root)
+  "Return non-nil if DIRECTORY is a sub-directory of ROOT or ROOT itself."
   (let ((root (eshell-z--expand-directory-name root))
         (directory (eshell-z--expand-directory-name directory)))
     (if (string= root directory)
@@ -159,7 +159,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 (defun eshell-z--common-root (dirs)
   "Return one directory of DIRS which is the root of all the rest directories, if any."
   (let ((root (car (sort (copy-sequence dirs) (lambda (s1 s2) (< (length s1) (length s2)))))))
-    (if (seq-every-p (lambda (elt) (eshell-z--directory-within-p root elt))
+    (if (seq-every-p (lambda (elt) (eshell-z--directory-within-p elt root))
                      dirs)
         root)))
 
@@ -177,7 +177,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
              (seq-some-p (lambda (root)
                            (and (stringp root)
                                 (eshell-z--directory-within-p
-                                 root current-directory)))
+                                 current-directory root)))
                          eshell-z-exclude-dirs))
       (let* (
              ;; Remove end slash, z doesn't use it

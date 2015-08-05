@@ -28,10 +28,10 @@
                  (expand-file-name (concat user-home-path "/" ".emacs.d")))))
 
 (ert-deftest eshell-z--directory-within-p ()
-  (should (equal (eshell-z--directory-within-p "~/.emacs.d" "~/.emacs.d/elpa") t))
-  (should (equal (eshell-z--directory-within-p "/tmp" "/tmp/") t))
-  (should (equal (eshell-z--directory-within-p "/tmp" "~/tmp") nil))
-  (should (equal (eshell-z--directory-within-p "/foo" "foobar") nil)))
+  (should (equal (eshell-z--directory-within-p "~/.emacs.d/elpa" "~/.emacs.d") t))
+  (should (equal (eshell-z--directory-within-p "/tmp/" "/tmp") t))
+  (should (equal (eshell-z--directory-within-p "~/tmp" "/tmp") nil))
+  (should (equal (eshell-z--directory-within-p "foobar" "/foo") nil)))
 
 (ert-deftest eshell-z--common-root ()
   (let ((dirs '("/Users/xcy/repos/mu/lib"
