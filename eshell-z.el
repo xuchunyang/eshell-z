@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2015  Chunyang Xu
 
-;; Author: Chunyang Xu <xuchunyang56@gmail.com>
+;; Author: Chunyang Xu <xu.chunyang@icloud.com>
 ;; Package-Requires: ((seq "1.0"))
 ;; Keywords: convenience
 ;; Version: 0.1
