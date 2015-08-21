@@ -5,7 +5,7 @@
 ;; Author: Chunyang Xu <xuchunyang56@gmail.com>
 ;; Package-Requires: ((seq "1.0"))
 ;; Keywords: convenience
-;; Version: 0.1
+;; Version: 0.2
 ;; Homepage: https://github.com/xuchunyang/eshell-z
 
 ;; This program is free software; you can redistribute it and/or modify
