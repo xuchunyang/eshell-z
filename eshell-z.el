@@ -3,9 +3,9 @@
 ;; Copyright (C) 2015  Chunyang Xu
 
 ;; Author: Chunyang Xu <xuchunyang56@gmail.com>
-;; Package-Requires: ((seq "1.0"))
+;; Package-Requires: ((cl-lib "0.5"))
 ;; Keywords: convenience
-;; Version: 0.2
+;; Version: 0.2.1
 ;; Homepage: https://github.com/xuchunyang/eshell-z
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@
 
 ;;; Code:
 
-(require 'seq)
+(require 'cl-lib)
 (require 'eshell)
 (require 'em-dirs)
 (require 'pcomplete)
@@ -158,9 +158,13 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 
 (defun eshell-z--common-root (dirs)
   "Return one directory of DIRS which is the root of all the rest directories, if any."
-  (let ((root (car (sort (copy-sequence dirs) (lambda (s1 s2) (< (length s1) (length s2)))))))
-    (if (seq-every-p (lambda (elt) (eshell-z--directory-within-p elt root))
-                     dirs)
+  (let ((root (car
+               (sort
+                (copy-sequence dirs)
+                (lambda (s1 s2) (< (length s1) (length s2)))))))
+    (if (cl-every
+         (lambda (elt) (eshell-z--directory-within-p elt root))
+         dirs)
         root)))
 
 (defun eshell-z--add ()
@@ -174,11 +178,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
              ;; $HOME isn't worth matching
              (string= current-directory (eshell-z--expand-directory-name "~"))
              ;; don't track excluded directory trees
-             (seq-some-p (lambda (root)
-                           (and (stringp root)
-                                (eshell-z--directory-within-p
-                                 current-directory root)))
-                         eshell-z-exclude-dirs))
+             (cl-some (lambda (root)
+                        (and (stringp root)
+                             (eshell-z--directory-within-p
+                              current-directory root)))
+                      eshell-z-exclude-dirs))
       (let* (
              ;; Remove end slash, z doesn't use it
              (key current-directory)
@@ -283,7 +287,7 @@ Base on frequency and time."
        (if list
            (let ((matches
                   (nreverse
-                   (seq-filter
+                   (cl-remove-if-not
                     (lambda (elt)
                       (string-match
                        (mapconcat #'identity
@@ -317,7 +321,7 @@ Base on frequency and time."
              (if (file-accessible-directory-p path)
                  (eshell/cd (list path))
                (let* ((matches
-                       (seq-filter
+                       (cl-remove-if-not
                         (lambda (elt)
                           (string-match
                            (mapconcat #'identity
