@@ -23,12 +23,15 @@
 
 ;;; Commentary:
 ;;
-;; The =eshell-z= package is an Emacs port of [[https://github.com/rupa/z][z]].
-;; It keeps track of where you’ve been and how many commands you invoke there,
-;; and provides a convenient way to jump to the directories you actually
-;; use. =eshell-z= and =z= can work together by sharing the same data file.
+;; `eshell-z.el' is an Emacs port of z(1) <https://github.com/rupa/z>.
 ;;
-;;; Usage:
+;; It keeps track of where you have been and how many commands you invoke there,
+;; and provides a convenient way to jump to the directories you actually
+;; use.
+;;
+;; `eshell-z.el' and z(1) can work together by sharing the same data file.
+;;
+;; Usage:
 ;;
 ;;  ~ $ z -h
 ;;  usage: z [-chlrtx] [regex1 regex2 ... regexn]
@@ -48,7 +51,7 @@
 ;;      z -t foo      cd to most recently accessed dir matching foo
 ;;      z -l foo      list all dirs matching foo (by frecency)
 ;;
-;;; Setup:
+;; Setup:
 ;;
 ;; To use this package, add following code to your init.el or .emacs
 ;;
