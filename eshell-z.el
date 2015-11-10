@@ -193,11 +193,11 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
         (if val
             (puthash key (cons key
                                (list :rank (1+ (plist-get (cdr val) :rank))
-                                     :time (truncate (time-to-seconds))))
+                                     :time (string-to-number (format-time-string "%s"))))
                      eshell-z-freq-dir-hash-table)
           (puthash key (cons key
                              (list :rank 1
-                                   :time (truncate (time-to-seconds))))
+                                   :time (string-to-number (format-time-string "%s"))))
                    eshell-z-freq-dir-hash-table)))))
 
   (if eshell-z-freq-dir-hash-table-file-name
@@ -227,7 +227,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 Base on frequency and time."
   (let* ((rank (plist-get (cdr value) :rank))
          (time (plist-get (cdr value) :time))
-         (dx (- (truncate (time-to-seconds)) time)))
+         (dx (- (string-to-number (format-time-string "%s")) time)))
     (cond ((< dx 3600) (* rank 4))
           ((< dx 86400) (* rank 2))
           ((< dx 604800) (/ rank 2.0))
@@ -311,7 +311,7 @@ Base on frequency and time."
                   (eshell-z--float-to-string
                    (if rank-only (eshell-z--rank elt)
                      (if time-only (- (eshell-z--time elt)
-                                      (truncate (time-to-seconds)))
+                                      (string-to-number (format-time-string "%s")))
                        (eshell-z--frecent elt))))
                   (car elt)))
                matches "\n")))
