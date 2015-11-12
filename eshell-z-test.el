@@ -18,6 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (require 'ert)
+(require 'eshell-z)
 
 (defvar user-home-path (getenv "HOME"))
 
