@@ -372,7 +372,7 @@ Base on frequency and time."
                      (insert
                       (format "cd '%s'" dir))
                      (eshell-send-input)))
-        (eshell-buffer (if (equal major-mode 'eshell-mode)
+        (eshell-buffer (if (eq major-mode 'eshell-mode)
                            (buffer-name)
                          "*eshell*")))
     (if (get-buffer eshell-buffer)
