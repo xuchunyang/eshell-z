@@ -1,11 +1,11 @@
-;;; eshell-z.el --- cd to frequent directory in eshell
+;;; eshell-z.el --- cd to frequent directory in eshell  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015  Chunyang Xu
+;; Copyright (C) 2015, 2016  Chunyang Xu
 
-;; Author: Chunyang Xu <xuchunyang56@gmail.com>
+;; Author: Chunyang Xu <mail@xuchunyang.me>
 ;; Package-Requires: ((cl-lib "0.5"))
 ;; Keywords: convenience
-;; Version: 0.2.1
+;; Version: 0.3
 ;; Homepage: https://github.com/xuchunyang/eshell-z
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -51,12 +51,22 @@
 ;;      z -t foo      cd to most recently accessed dir matching foo
 ;;      z -l foo      list all dirs matching foo (by frecency)
 ;;
+;; Install:
+;;
+;; You can install this package from Melpa and Melpa-stable with package.el,
+;; that is, ~M-x package-install RET eshell-z RET~. Or you can also install it
+;; manually by add eshell-z.el to your `load-path', something like
+;;
+;;   (add-to-list 'load-path "path/to/eshell-z.el")
+;;
 ;; Setup:
 ;;
 ;; To use this package, add following code to your init.el or .emacs
 ;;
-;;   (require 'eshell-z)
-;;
+;;   (add-hook 'eshell-mode-hook
+;;             (defun my-eshell-mode-hook ()
+;;               (require 'eshell-z)))
+
 
 ;;; Code:
 

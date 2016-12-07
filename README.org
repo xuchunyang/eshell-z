@@ -1,4 +1,4 @@
-* =eshell-z= [[https://travis-ci.org/xuchunyang/eshell-z][https://travis-ci.org/xuchunyang/eshell-z.svg?branch=master]] [[http://melpa.org/#/eshell-z][http://melpa.org/packages/eshell-z-badge.svg]]
+* =eshell-z= [[https://travis-ci.org/xuchunyang/eshell-z][https://travis-ci.org/xuchunyang/eshell-z.svg?branch=master]] [[https://melpa.org/#/eshell-z][https://melpa.org/packages/eshell-z-badge.svg]] [[https://stable.melpa.org/#/eshell-z][https://stable.melpa.org/packages/eshell-z-badge.svg]]
 ** Introduction
 The =eshell-z= package is an Emacs port of [[https://github.com/rupa/z][z]].
 It keeps track of where you’ve been and how many commands you invoke there,
@@ -35,7 +35,9 @@ Add eshell-z to your =load-path=. Something like
 ** Setup
 To use this package, add following code to your init.el or .emacs
 #+BEGIN_SRC emacs-lisp
-(require 'eshell-z)
+(add-hook 'eshell-mode-hook
+          (defun my-eshell-mode-hook ()
+            (require 'eshell-z)))
 #+END_SRC
 
 ** Usage
