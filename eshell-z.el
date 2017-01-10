@@ -75,6 +75,10 @@
 (require 'em-dirs)
 (require 'pcomplete)
 
+(defgroup eshell-z nil
+  "Eshell z customizations."
+  :group 'eshell)
+
 (defcustom eshell-z-freq-dir-hash-table-file-name
   (or (getenv "_Z_DATA")
       (expand-file-name "~/.z"))
@@ -87,6 +91,17 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
   "A list of directory trees to exclude."
   :type '(repeat (choice string))
   :group 'eshell-dirs)
+
+(defcustom eshell-z-change-dir-function
+  (lambda (dir)
+    (eshell-kill-input)
+    (goto-char (point-max))
+    (insert
+     (format "cd '%s'" dir))
+    (eshell-send-input))
+  "Function to control how the directory should be changed."
+  :type 'function
+  :group 'eshell-z)
 
 (defvar eshell-z-freq-dir-hash-table nil
   "The frequent directory that Eshell was in.")
@@ -385,20 +400,14 @@ Base on frequency and time."
                         (> (eshell-z--frecent elt1)
                            (eshell-z--frecent elt2))))))
            (completing-read "pattern " paths nil t))))
-  (let ((cd-eshell (lambda ()
-                     (eshell-kill-input)
-                     (goto-char (point-max))
-                     (insert
-                      (format "cd '%s'" dir))
-                     (eshell-send-input)))
-        (eshell-buffer (if (eq major-mode 'eshell-mode)
+  (let ((eshell-buffer (if (eq major-mode 'eshell-mode)
                            (buffer-name)
                          "*eshell*")))
     (if (get-buffer eshell-buffer)
         (switch-to-buffer eshell-buffer)
       (call-interactively 'eshell))
     (unless (get-buffer-process (current-buffer))
-      (funcall cd-eshell))))
+      (funcall eshell-z-change-dir-function dir))))
 
 (provide 'eshell-z)
 ;;; eshell-z.el ends here
