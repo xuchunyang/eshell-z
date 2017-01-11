@@ -246,6 +246,7 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
             (eshell-z--write-freq-dir-hash-table))
         (setq eshell-z--remove-p nil))))
 
+;; FIXME: It's much better to provide a minor mode to handle this
 (add-hook 'eshell-post-command-hook #'eshell-z--add)
 (add-hook 'eshell-post-command-hook #'eshell-z--remove 'append)
 
