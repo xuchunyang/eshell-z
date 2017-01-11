@@ -85,12 +85,12 @@
   "If non-nil, name of the file to read/write the freq-dir-hash-table.
 If it is nil, the freq-dir-hash-table will not be written to disk."
   :type 'file
-  :group 'eshell-dirs)
+  :group 'eshell-z)
 
 (defcustom eshell-z-exclude-dirs '("/tmp/" "~/.emacs.d/elpa")
   "A list of directory trees to exclude."
   :type '(repeat (choice string))
-  :group 'eshell-dirs)
+  :group 'eshell-z)
 
 (defcustom eshell-z-change-dir-function
   (lambda (dir)
