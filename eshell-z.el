@@ -1,6 +1,6 @@
 ;;; eshell-z.el --- cd to frequent directory in eshell  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015, 2016  Chunyang Xu
+;; Copyright (C) 2015, 2016, 2017  Chunyang Xu
 
 ;; Author: Chunyang Xu <mail@xuchunyang.me>
 ;; Package-Requires: ((cl-lib "0.5"))
