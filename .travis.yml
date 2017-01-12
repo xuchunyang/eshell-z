@@ -20,5 +20,5 @@ install:
   - $EMACS --version
 
 script:
-  - $EMACS --batch -f batch-byte-compile eshell-z.el
-  - $EMACS --batch -L . -l ert -l eshell-z-test -f ert-run-tests-batch-and-exit
+  - $EMACS -Q --batch -f batch-byte-compile eshell-z.el
+  - $EMACS -Q --batch -L . -l ert -l eshell-z-test -f ert-run-tests-batch-and-exit
