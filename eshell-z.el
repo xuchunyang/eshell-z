@@ -389,6 +389,8 @@ Base on frequency and time."
       (pcomplete-here* (eshell-z--hash-table-values
                         eshell-z-freq-dir-hash-table)))))
 
+(defvar ivy-sort-functions-alist)
+
 ;;;###autoload
 (defun eshell-z (dir)
   "Switch to eshell and change directory to DIR."
