@@ -106,6 +106,9 @@ If it is nil, the freq-dir-hash-table will not be written to disk."
 (defvar eshell-z-freq-dir-hash-table nil
   "The frequent directory that Eshell was in.")
 
+(defvar eshell-z-change-dir-hook nil
+  "Hook run just before eshell-z calls eshell/cd.")
+
 (defun eshell-z--now ()
   "Number of seconds since epoch as a string."
   (format-time-string "%s"))
@@ -287,6 +290,11 @@ Base on frequency and time."
   (unless eshell-z-freq-dir-hash-table
     (setq eshell-z-freq-dir-hash-table (make-hash-table :test 'equal))))
 
+(defun eshell-z--cd (value)
+  "Invokes eshell/cd, running any hooks in eshell-z-change-dir-hook first."
+  (run-hooks 'eshell-z-change-dir-hook)
+  (eshell/cd value))
+
 (defun eshell/z (&rest args)
   "cd to frequent directory in eshell."
   (eshell-z--ensure-hash-table)
@@ -353,13 +361,13 @@ Base on frequency and time."
                   (car elt)))
                matches "\n")))
          (if (null args)
-             (eshell/cd (list (completing-read "pattern " paths nil t)))
+             (eshell-z--cd (list (completing-read "pattern " paths nil t)))
            (let ((path (car args)))
              (if (numberp path)
                  (setq path (number-to-string path)))
              ;; if we hit enter on a completion just go there
              (if (file-accessible-directory-p path)
-                 (eshell/cd (list path))
+                 (eshell-z--cd (list path))
                (let* ((matches
                        (cl-remove-if-not
                         (lambda (elt)
@@ -373,7 +381,7 @@ Base on frequency and time."
                       (newdir (or (eshell-z--common-root (mapcar #'car matches))
                                   (caar matches))))
                  (if (and newdir (file-accessible-directory-p newdir))
-                     (eshell/cd (list newdir))))))))))
+                     (eshell-z--cd (list newdir))))))))))
    nil))
 
 (defun pcomplete/z ()
